@@ -22,7 +22,7 @@ export class Bot{
     D.set(gx-a.pos.x,0,gz-a.pos.z);const l=D.length();let sped=0;
     if(l>1){D.divideScalar(l);const px=a.pos.x,pz=a.pos.z;a.pos.x+=D.x*sp*dt;a.pos.z+=D.z*sp*dt;collide(a.pos,.35,a.pos.y);
       if(Math.hypot(a.pos.x-px,a.pos.z-pz)<sp*dt*.3){this.goal=null;this.strafe*=-1}sped=sp;this.yaw=this.target&&!out?Math.atan2(this.target.pos.x-a.pos.x,this.target.pos.z-a.pos.z):Math.atan2(D.x,D.z)}
-    const g=height(a.pos.x,a.pos.z);a.pos.y+=(g-a.pos.y)*Math.min(1,dt*12);a.mesh.position.copy(a.pos);a.mesh.rotation.y=this.yaw;animate(a.mesh,this.t,sped,false,!!this.target);
+    const g=height(a.pos.x,a.pos.z);a.pos.y+=(g-a.pos.y)*Math.min(1,dt*12);a.mesh.position.copy(a.pos);a.mesh.rotation.y=this.yaw;animate(a.mesh,this.t,sped,false,!!this.target,dt);
     const gun=this.gun;gun.tick(dt);if(gun.mag<=0)gun.reload();this.react-=dt;
     if(this.target&&this.react<=0&&gun.canFire()){const t=this.target.pos,dist=Math.hypot(t.x-a.pos.x,t.z-a.pos.z);
       if(dist<gun.d.range*.8){gun.mag--;gun.cd=gun.d.rate*(gun.d.auto?2.2:1.3);gun.extra=.02+dist*.0016;O.set(a.pos.x,a.pos.y+1.5,a.pos.z);D.set(t.x-O.x,t.y+1.2-O.y,t.z-O.z).normalize();
