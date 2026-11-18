@@ -26,7 +26,9 @@ function fallback(o){
 }
 function install(root){
   if(!source||root.userData.realModel)return;
-  const model=clone(source);model.scale.setScalar(1);model.position.set(0,0,0);
+  const model=clone(source);
+  const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y;
+  const scale=height>0?1.82/height:1;model.scale.setScalar(scale);model.position.y=-bounds.min.y*scale;
   const appearance=root.userData.appearance||{},materials=new Map();
   model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;
     const tint=(m)=>{if(!materials.has(m)){const n=m.clone(),name=(m.name+' '+o.name).toLowerCase();
@@ -41,7 +43,8 @@ function install(root){
   const find=(...names)=>clips.find(c=>names.some(n=>c.name.toLowerCase().includes(n.toLowerCase())));
   root.userData.actions={idle:find('idle'),walk:find('walk'),run:find('run')||find('walk')};
   const idle=root.userData.actions.idle||clips[0];if(idle){root.userData.current='idle';root.userData.mixer.clipAction(idle).play()}
-  root.userData.hand=model.getObjectByName('mixamorigRightHand')||model.getObjectByName('RightHand')||model;
+  let hand=null;model.traverse(o=>{const n=o.name.toLowerCase().replace(/[^a-z]/g,'');if(!hand&&(n.includes('righthand')||n==='handr'||n.endsWith('handright')))hand=o});
+  root.userData.hand=hand||model;
   root.userData.fallback.visible=false;
   if(root.userData.pendingGun)setGun(root,root.userData.pendingGun);
 }
