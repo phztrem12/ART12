@@ -26,7 +26,7 @@ export class Player{
     a.pos.x+=mx*sp*dt;a.pos.z+=mz*sp*dt;this.speed=l>0?sp:0;const g=height(a.pos.x,a.pos.z);this.vy-=22*dt;if(k.Space&&a.pos.y<=g+.05&&!a.crouch)this.vy=7.2;
     a.pos.y+=this.vy*dt;collide(a.pos,.35,a.pos.y);if(a.pos.y<=g){a.pos.y=g;this.vy=0}
     const R=395,r=Math.hypot(a.pos.x,a.pos.z);if(r>R){a.pos.x*=R/r;a.pos.z*=R/r}
-    a.mesh.position.copy(a.pos);a.mesh.rotation.y=this.yaw+Math.PI;animate(a.mesh,this.t,this.speed,a.crouch,this.aim&&!!this.gun);
+    a.mesh.position.copy(a.pos);a.mesh.rotation.y=this.yaw+Math.PI;animate(a.mesh,this.t,this.speed,a.crouch,this.aim&&!!this.gun,dt);
     const gun=this.gun;if(gun){gun.tick(dt);gun.extra=(this.aim?0:.012)+(this.speed>0?.01:0);if(gun.mag<=0)gun.reload();if(gun.canFire()&&document.pointerLockElement&&(gun.d.auto?this.fireHeld:this.click))this.shoot(cam)}this.click=false;
     const d=this.aim?1.9:3.6,cp=Math.cos(this.pitch),sh=this.aim?.55:.7,eye=a.crouch?1.2:1.65;
     C.set(a.pos.x+cy*sh+sy*cp*d,a.pos.y+eye-Math.sin(this.pitch)*d+.25,a.pos.z-sy*sh+cy*cp*d);const gh=height(C.x,C.z)+.4;if(C.y<gh)C.y=gh;cam.position.lerp(C,Math.min(1,dt*25));
