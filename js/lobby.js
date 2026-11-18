@@ -37,7 +37,7 @@ export class Lobby{
     p.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{state.start=b.dataset.g;save();this.build();this.panel('inv')});
     const g=id=>p.querySelector(id);if(g('#nm'))g('#nm').oninput=e=>{state.name=e.target.value||'Jogador';save();this.prof()};
     if(g('#se'))g('#se').oninput=e=>{state.sens=+e.target.value;save()};if(g('#vo'))g('#vo').oninput=e=>{state.vol=+e.target.value;save()}}
-  update(dt){this.t+=dt;if(!this.drag)this.rot+=(Math.sin(this.t*.4)*.3-this.rot)*dt*.5;this.h.rotation.y=this.rot;animate(this.h,this.t,0,false,false)}
+  update(dt){this.t+=dt;if(!this.drag)this.rot+=(Math.sin(this.t*.4)*.3-this.rot)*dt*.5;this.h.rotation.y=this.rot;animate(this.h,this.t,0,false,false,dt)}
   render(){this.r.render(this.scene,this.cam)}
   dispose(){this.L.forEach(([t,f])=>(t==='mousedown'?this.cv:window).removeEventListener(t,f))}
 }
