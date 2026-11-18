@@ -27,7 +27,15 @@ function fallback(o){
 function install(root){
   if(!source||root.userData.realModel)return;
   const model=clone(source);model.scale.setScalar(1);model.position.set(0,0,0);
-  model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){o.material.roughness=Math.max(.55,o.material.roughness??.8)}}});
+  const appearance=root.userData.appearance||{},materials=new Map();
+  model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;
+    const tint=(m)=>{if(!materials.has(m)){const n=m.clone(),name=(m.name+' '+o.name).toLowerCase();
+      if(/uniform|cloth|shirt|pants|jacket|body/.test(name)&&appearance.cloth)n.color.lerp(new THREE.Color(appearance.cloth),.22);
+      if(/vest|armor|gear|pack|helmet/.test(name)&&appearance.vest)n.color.lerp(new THREE.Color(appearance.vest),.2);
+      if(/skin|face/.test(name)&&appearance.skin)n.color.lerp(new THREE.Color(appearance.skin),.15);
+      n.roughness=Math.max(.55,n.roughness??.8);materials.set(m,n)}return materials.get(m)};
+    o.material=Array.isArray(o.material)?o.material.map(tint):tint(o.material);
+  }});
   root.add(model);root.userData.realModel=model;
   root.userData.mixer=new THREE.AnimationMixer(model);
   const find=(...names)=>clips.find(c=>names.some(n=>c.name.toLowerCase().includes(n.toLowerCase())));
@@ -38,7 +46,7 @@ function install(root){
   if(root.userData.pendingGun)setGun(root,root.userData.pendingGun);
 }
 export function createHuman(o={}){
-  const g=new THREE.Group();g.userData={mixer:null,actions:{},current:null,pendingGun:null};
+  const g=new THREE.Group();g.userData={mixer:null,actions:{},current:null,pendingGun:null,appearance:o};
   const fb=new THREE.Group();g.add(fb);g.userData.fallback=fb;fallback({...o,root:fb});
   if(source)install(g);else waiting.add(g);return g;
 }
